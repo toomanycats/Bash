@@ -4,11 +4,15 @@
 ## for a music files that contains the keywords in either order.
 ## All audio file types are checked for.
 
+ declare -r temp="/tmp/play_list"
+
 trap die SIGINT # control C
 
 die()
 {
   echo -e "\n*** Quiting Play Program ***\n"
+  rm $temp
+  exit 0
 }
 
 build_list()
@@ -22,34 +26,37 @@ build_list()
     echo "$list1$list2$list3$list4$list5"
 }
 
-main()
-{
-  echo -e "\n  --Press CR to skip a track and Shift Control C to quit-- \n"
+######  Starts Here ##########
+echo -e "\n  --Press CR to skip a track and Shift Control C to quit-- \n"
 
-  string="*$1*$2*"
+string="*$1*$2*"
 
+list=$(build_list "${string}")
+if [[ "${#list}" -lt 1 ]]; then
+  string="*$2*$1*"
+  echo -e "reversing order\n"
   list=$(build_list "${string}")
-  echo $list
   if [[ "${#list}" -lt 1 ]]; then
-    string="*$2*$1*"
-    echo -e "reversing order\n"
-    list=$(build_list "${string}")
-    if [[ "${#list}" -lt 1 ]]; then
-      echo -e "\n----Nothing Found----\n"
-      exit 1
-    fi 
-  fi
-
-  echo "$list"
-
-  for track in "${list[@]}"; do
-    name=$(basename "${track}")
-    echo -e "\nTRACK: $name \n"
-    mplayer -slave -really-quiet -af volnorm 2 ${track} 2>/dev/null
-  done 
-
-  exit 0
-}
+    echo -e "\n----Nothing Found----\n"
+    exit 1
+  fi 
+fi
 
 
-main "$@"
+echo -e "######################" 
+echo -e "###### PLAY LIST #####"
+echo -e "######################" 
+echo "$list" | while read line;do echo $(basename "$line"); done
+echo -e "######################"    
+       
+  
+echo "$list" | while read track;do  
+  name=$(basename "$track")
+  echo -e "\nTRACK: $name \n"
+  
+  mplayer -really-quiet -af volnorm 2 "$track" 2>/dev/null   
+    
+done
+
+
+
