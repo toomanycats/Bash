@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+tmux  new -s $1 
+
