@@ -1,4 +1,2 @@
-#!/usr/bin/zsh
-
-tmux  new -s $1 
+tmux  new -s $1
 

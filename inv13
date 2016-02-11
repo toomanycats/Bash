@@ -1,0 +1,4 @@
+input="$1"
+
+output="$(echo $input | tr [N-ZA-Mn-za-m] [A-Za-z])"
+echo "$output"

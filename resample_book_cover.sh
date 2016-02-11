@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 NEW_XDIM=$1
 NEW_YDIM=$2

@@ -54,7 +54,7 @@ echo "$list" | while read track;do
   name=$(basename "$track")
   echo -e "\nTRACK: $name \n"
   
-  mplayer -really-quiet -af volnorm 2 "$track" 2>/dev/null   
+  mplayer -really-quiet -af volnorm 2 "$track" 2>/dev/null  || echo "failure" 
     
 done
 
