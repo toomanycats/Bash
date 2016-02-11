@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for file in *.mp4;do
+    if [ -e ${file/%.*/.mp3} ];then
+        echo "${file/%.*/.mp3} exists"
+        continue
+    else;
+        mencoder "$file" -of rawaudio -oac mp3lame -ovc copy -o ${file/%.*/.mp3}
+    fi
+done
