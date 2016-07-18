@@ -1,4 +1,4 @@
 #!/bin/bash
 
 read input
-printf "%'.f" $input
+printf "%'.f\n" $input
