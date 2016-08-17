@@ -1,0 +1,4 @@
+#!/bin/bash
+source /home/daniel/.zprofile
+echo "Escape key re-mapped to Caps-Lock"
+
