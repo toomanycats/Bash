@@ -5,6 +5,6 @@ bool=$(xmodmap -pm | grep lock | grep -c "\(0x9\)")
 if [ $bool -eq 0 ]; then
     source /home/daniel/.zprofile
     # log located in "/var/log/syslog"
-    logger -i "Escape key re-mapped to Caps-Lock"
+    logger -i -t "remap Escape" "Escape key re-mapped to Caps-Lock"
 fi
 
