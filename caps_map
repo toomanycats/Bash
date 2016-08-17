@@ -1,4 +1,9 @@
 #!/bin/bash
-source /home/daniel/.zprofile
-echo "Escape key re-mapped to Caps-Lock"
+# Check if Escape has been mapped to Caps_Lock
+
+bool=$(xmodmap -pm | grep lock | grep -c "\(0x9\)")
+if [ $bool -eq 0 ]; then
+    source /home/daniel/.zprofile
+    echo "Escape key re-mapped to Caps-Lock"
+fi
 
