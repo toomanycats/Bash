@@ -32,11 +32,11 @@ function get_file_ext
     echo ${ext}
 }
 
-function file_type
+function file_info
 {
     input="$1"
-    type_=$(file "$input" | cut -d: -f 2 | sed 's/\W/ /g')
-    echo $type_
+    info=$(file -b "$input")
+    echo $info
 }
 
 function get_byte_size
@@ -63,11 +63,11 @@ function get_series_desc
 
 file_="$1"
 ext=$(get_file_ext "${file_}")
-type_=$(file_type "${file_}")
+info=$(file_info "${file_}")
 size=$(get_byte_size "${file_}")
 fn=$(get_filename "${file_}")
-path=$(get_path "${file_}")
+dirname=$(get_path "${file_}")
 study_desc=$(get_study_desc "${file_}")
 series_desc=$(get_series_desc "${file_}")
 
-printf "\"${file_}\",\"${ext}\",\"${type}\",\"${size}\",\"${fn}\",\"${path}\",\"${study_desc}\",\"${series_desc}\"\n"
+printf "\"${file_}\",\"${ext}\",\"${info}\",\"${size}\",\"${fn}\",\"${dirname}\",\"${study_desc}\",\"${series_desc}\"\n"
