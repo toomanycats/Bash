@@ -21,7 +21,7 @@ printf "\"full_path\",\"ext\",\"type\",\"size\",\"basename\",\"dirname\",\"study
 #find ${root_dir} -type f | parallel -d"\n" -n 1 --jobs 4  'inventory.sh {}' >> $output
 
 for f in $(find ${root_dir} -type f);do
-    dicome_inventory.sh >> $output
+    dicom_inventory.sh $f >> $output
 done
 
 # remove \r that can occur from Windoze
