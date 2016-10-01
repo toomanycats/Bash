@@ -15,14 +15,12 @@ fi
 
 trap die SIGINT
 
-printf "\"full_path\",\"ext\",\"type\",\"size\",\"basename\",\"dirname\",\"study_desc\",\"series_desc\"" > $output
+printf "\"full_path\",\"ext\",\"info\",\"size\",\"basename\",\"dirname\",\"study_desc\",\"series_desc\",\"manuf\",\"model\",\"serialno\"" > $output
 
-# parallel not installed on ucsd machine
-#find ${root_dir} -type f | parallel -d"\n" -n 1 --jobs 4  'inventory.sh {}' >> $output
+# from dicom_inventory.sh
+#printf "\"${file_}\",\"${ext}\",\"${info}\",\"${size}\",\"${fn}\",\"${dirname}\",\"${study}\",\"${series}\",\"${manu}\",\"${model}\",\"${serialno}\"\n"
 
-for f in $(find ${root_dir} -type f);do
-    dicom_inventory.sh $f >> $output
-done
+find ${root_dir} -type f | parallel -d"\n" -n 1 --jobs 18 'dicom_inventory.sh {}' >> $output
 
 # remove \r that can occur from Windoze
 sed -i 's/\r//g' $output
