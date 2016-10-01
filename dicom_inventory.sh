@@ -49,35 +49,35 @@ function get_byte_size
 function get_study_desc
 {
     input="$1"
-    desc=$(dcmdump $input | grep -i "studydesc" | grep -Eo "\[.*?\]" | tr "]["  " ")
+    desc=$(dcmdump $input | grep -i "studydesc" | grep -Eo "\[\w+\]" | tr "]["  " ")
     echo $desc
 }
 
 function get_series_desc
 {
     input="$1"
-    desc=$(dcmdump $input | grep -i "seriesdesc" | grep -Eo "\[.*?\]" | tr "][" " ")
+    desc=$(dcmdump $input | grep -i "seriesdesc" | grep -Eo "\[\w+\]" | tr "][" " ")
     echo $desc
 }
 
 function get_scanner_manuf
 {
     input="$1"
-    manu=$(dcmdump "$input" | grep -iw 'manufacturer' | grep -iPo "\[(.*?\])" | tr "][" " ")
+    manu=$(dcmdump "$input" | grep -iw 'manufacturer' | grep -iPo "\[\w+\]" | tr "][" " ")
     echo "$manu"
 }
 
 function get_scanner_model
 {
     input="$1"
-    model=$(dcmdump "$input" | grep -i 'manufacturermodelname' | grep -Poi "\[(.*?\])" | tr "][" " ")
+    model=$(dcmdump "$input" | grep -i 'manufacturermodelname' | grep -Poi "\[\w+\]" | tr "][" " ")
     echo "$model"
 }
 
 function get_scanner_serial_num
 {
     input="$1"
-    serial=$(dcmdump "$input" | grep -i "deviceserialnumber" | grep -iPo "\[(.*?\])" | tr "][" " ")
+    serial=$(dcmdump "$input" | grep -i "deviceserialnumber" | grep -iPo "\[\w+\]" | tr "][" " ")
     echo "$serial"
 }
 
