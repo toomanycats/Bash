@@ -49,36 +49,48 @@ function get_byte_size
 function get_study_desc
 {
     input="$1"
-    desc=$(dcmdump $input | grep -i "studydesc" | grep -Eo "\[\w+\]" | tr "]["  " ")
+    desc=$(dcmdump $input | grep -i "studydesc")
+    desc=$(clean "$desc")
     echo $desc
 }
 
 function get_series_desc
 {
     input="$1"
-    desc=$(dcmdump $input | grep -i "seriesdesc" | grep -Eo "\[\w+\]" | tr "][" " ")
-    echo $desc
+    series=$(dcmdump $input | grep -i "seriesdesc" )
+    series=$(clean "$series")
+    echo $series
 }
 
 function get_scanner_manuf
 {
     input="$1"
-    manu=$(dcmdump "$input" | grep -iw 'manufacturer' | grep -iPo "\[\w+\]" | tr "][" " ")
+    manu=$(dcmdump "$input" | grep -iw 'manufacturer')
+    manu=$(clean "$manu")
     echo "$manu"
 }
 
 function get_scanner_model
 {
     input="$1"
-    model=$(dcmdump "$input" | grep -i 'manufacturermodelname' | grep -Poi "\[\w+\]" | tr "][" " ")
+    model=$(dcmdump "$input" | grep -i 'manufacturermodelname')
+    model=$(clean "$model")
     echo "$model"
 }
 
 function get_scanner_serial_num
 {
     input="$1"
-    serial=$(dcmdump "$input" | grep -i "deviceserialnumber" | grep -iPo "\[\w+\]" | tr "][" " ")
+    serial=$(dcmdump "$input" | grep -i "deviceserialnumber")
+    serial=$(clean "$serial")
     echo "$serial"
+}
+
+function clean
+{
+    input="$1"
+    out=$(echo "$input" | grep -oP "\[\K(.*?\])" | sed 's/\]//1')
+    echo "$out"
 }
 
 ############### starts here ######################
@@ -89,10 +101,10 @@ info=$(file_info "${file_}")
 size=$(get_byte_size "${file_}")
 fn=$(get_filename "${file_}")
 dirname=$(get_path "${file_}")
-study_desc=$(get_study_desc "${file_}")
-series_desc=$(get_series_desc "${file_}")
-manu=$(get_scanner_manuf "${file_}")
+study=$(get_study_desc "${file_}" )
+series=$(get_series_desc "${file_}")
+manu=$(get_scanner_manuf "${file_}" )
 model=$(get_scanner_model "${file_}")
 serialno=$(get_scanner_serial_num "${file_}")
 
-printf "\"${file_}\",\"${ext}\",\"${info}\",\"${size}\",\"${fn}\",\"${dirname}\",\"${study_desc}\",\"${series_desc}\",\"${manu}\",\"${model}\",\"${serialno}\"\n"
+printf "\"${file_}\",\"${ext}\",\"${info}\",\"${size}\",\"${fn}\",\"${dirname}\",\"${study}\",\"${series}\",\"${manu}\",\"${model}\",\"${serialno}\"\n"
