@@ -13,7 +13,7 @@ if [ $# -ne 2 ];then
     exit 2
 fi
 
-trap die SIGINT
+trap die SIGINT ERR
 
 printf "\"full_path\",\"ext\",\"info\",\"size\",\"basename\",\"dirname\",\"study_desc\",\"series_desc\",\"manuf\",\"model\",\"serialno\"" > $output
 
