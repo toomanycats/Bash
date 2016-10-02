@@ -93,18 +93,46 @@ function clean
     echo "$out"
 }
 
+function is_dicom
+{
+    input="$1"
+    bool=$(echo "$input" | grep -ic "dicom")
+    if [ $bool -gt 0 ];then
+        bool="true"
+    else
+        bool="false"
+    fi
+
+    echo $bool
+}
 ############### starts here ######################
 
 file_="$1"
+
 ext=$(get_file_ext "${file_}")
 info=$(file_info "${file_}")
 size=$(get_byte_size "${file_}")
 fn=$(get_filename "${file_}")
 dirname=$(get_path "${file_}")
-study=$(get_study_desc "${file_}" )
-series=$(get_series_desc "${file_}")
-manu=$(get_scanner_manuf "${file_}" )
-model=$(get_scanner_model "${file_}")
-serialno=$(get_scanner_serial_num "${file_}")
+
+dicom_bool=$(is_dicom "${info}")
+if [[ $dicom_bool == "true" ]];then
+
+    study=$(get_study_desc "${file_}" )
+    series=$(get_series_desc "${file_}")
+    manu=$(get_scanner_manuf "${file_}" )
+    model=$(get_scanner_model "${file_}")
+    serialno=$(get_scanner_serial_num "${file_}")
+else
+    study="NULL"
+    series="NULL"
+    manu="NULL"
+    model="NULL"
+    serialno="NULL"
+fi
 
 printf "\"${file_}\",\"${ext}\",\"${info}\",\"${size}\",\"${fn}\",\"${dirname}\",\"${study}\",\"${series}\",\"${manu}\",\"${model}\",\"${serialno}\"\n"
+
+
+
+
