@@ -1,2 +1,3 @@
+#!/bin/zsh
 gnome-terminal --geometry=80x1000
 caps_map
