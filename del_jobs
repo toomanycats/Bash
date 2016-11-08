@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+trap "exit 1" ERR SIGINT
+qstat | grep dcuneo | grep 'Eqw' | awk '{print $1}' | xargs qdel && exit 0
