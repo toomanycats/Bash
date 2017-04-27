@@ -1,3 +1,4 @@
+#!/bin/bash
 # Check if Escape has been mapped to Caps_Lock
 
 bool=$(xmodmap -pm | grep lock | grep -c "\(0x9\)")
