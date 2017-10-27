@@ -1,62 +1,92 @@
 #!/bin/bash
 
-## This program takes one or two keyword as input, and searchs
-## for a music files that contains the keywords in either order.
-## All audio file types are checked for.
+## This program takes one or two keywords as input, and searchs
+## for a music files that contain the keywords in either order.
+## mp3, flac, wma, wav, ogg and mp4's are searched
+##
+## To use this script, create a single line text config in your home named
+## ~/.play_config .
+## put a line to export the path to your music files:
+## export MUSIC_DIR=/mnt/Music
 
- declare -r temp="/tmp/play_list"
+### Config ###
+config=~/.play_config
 
-trap die SIGINT # control C
+if [ -z ${MUSIC_DIR} ];then
+    source $config
+fi
 
+### Functions ###
 die()
 {
-  echo -e "\n*** Quiting Play Program ***\n"
-  rm $temp
-  exit 0
+    echo -e "\n*** Quiting Play Program ***\n"
+        if [ -e $temp ];then
+            rm $temp
+        fi
+    exit 0
 }
 
 build_list()
 {
-    list1=$(find /media/Music -type f -iname "$1.mp3")
-    list2=$(find /media/Music -type f -iname "$1.flac")
-    list3=$(find /media/Music -type f -iname "$1.wma")
-    list4=$(find /media/Music -type f -iname "$1.wav")
-    list5=$(find /media/Music -type f -iname "$1.mp4")
-  
-    echo "$list1$list2$list3$list4$list5"
+    input="$1"
+    list=$(find ${MUSIC_DIR} -type f -iname "${input}.mp3" \
+        -o -iname "${input}.flac" \
+        -o -iname "${input}.wma" \
+        -o -iname "${input}.wav" \
+        -o -iname "${input}.ogg" \
+        -o -iname "${input}.mp4")
+
+    echo "${list}"
 }
 
-######  Starts Here ##########
+function show_list
+{
+    list="$1"
+
+    echo -e "######################"
+    echo -e "###### PLAY LIST #####"
+    echo -e "######################"
+    echo -e "######################"
+
+    for path in "${list}"; do
+        base="$(basename "${path}")"
+        echo "${base}"
+    done
+
+    echo -e "######################"
+}
+
+###  Begin Script ###
+
+declare -r temp="/tmp/play_list"
+
+trap die SIGINT EXIT ERR
+
 echo -e "\n  --Press CR to skip a track and Shift Control C to quit-- \n"
 
-string="*$1*$2*"
+key1="$1"
+key2="$2"
+string="*${key1}*${key2}*"
 
 list=$(build_list "${string}")
-if [[ "${#list}" -lt 1 ]]; then
-  string="*$2*$1*"
-  echo -e "reversing order\n"
-  list=$(build_list "${string}")
-  if [[ "${#list}" -lt 1 ]]; then
-    echo -e "\n----Nothing Found----\n"
-    exit 1
-  fi 
+
+if [ -z ${list} ]; then
+    echo -e "reversing order of keywords\n"
+    string="*${key2}*${key1}*"
+    list=$(build_list "${string}")
+
+    if [ -z ${list} ]; then
+        echo -e "\n----Nothing Found----\n"
+        exit 1
+    fi
 fi
 
+show_list "${list}"
 
-echo -e "######################" 
-echo -e "###### PLAY LIST #####"
-echo -e "######################" 
-echo "$list" | while read line;do echo $(basename "$line"); done
-echo -e "######################"    
-       
-  
-echo "$list" | while read track;do  
+for track in "${list}"; do
   name=$(basename "$track")
   echo -e "\nTRACK: $name \n"
-  
-  mplayer -really-quiet -af volnorm 2 "$track" 2>/dev/null  || echo "failure" 
-    
+
+  mplayer -really-quiet -af volnorm 2 "$track" 2>/dev/null  || echo "mplayer failure"
+
 done
-
-
-
