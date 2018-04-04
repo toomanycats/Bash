@@ -1,4 +1,4 @@
 #!/bin/bash
 
 read input
-printf "%'.f\n" $input
+echo ${input} | grep -oP '\d+' | printf "%'.f\n"
