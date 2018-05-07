@@ -1,4 +1,5 @@
 #!/bin/bash
 
-read input
-echo ${input} | grep -oP '\d+' | printf "%'.f\n"
+read input || exit -1
+input=$(echo ${input} | grep -oP '\d+')
+printf "%'.f\n" ${input}
