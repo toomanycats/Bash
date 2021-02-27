@@ -3,8 +3,12 @@
 
 bool=$(xmodmap -pm | grep lock | grep -c "\(0x9\)")
 if [ $bool -eq 0 ]; then
-    source ${HOME}/.zprofile
-    # log located in "/var/log/syslog"
-    logger -i -t "remap Escape" "Escape key re-mapped to Caps-Lock"
+    xmodmap  << EOF
+remove Lock = Caps_Lock
+keycode 66 = Escape
+keycode 9 = Caps_Lock
+add Lock = Caps_Lock
+EOF
+    echo -e "caps lock remapped to escape key\n"
 fi
 
