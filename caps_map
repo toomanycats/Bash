@@ -3,12 +3,8 @@
 
 bool=$(xmodmap -pm | grep lock | grep -c "\(0x9\)")
 if [ $bool -eq 0 ]; then
-    xmodmap  << EOF
-remove Lock = Caps_Lock
-keycode 66 = Escape
-keycode 9 = Caps_Lock
-add Lock = Caps_Lock
-EOF
+    # reads ~/.Xmodmap
+    xmodmap
     echo -e "caps lock remapped to escape key\n"
 fi
 
