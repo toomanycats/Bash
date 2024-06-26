@@ -1,9 +1,5 @@
 #!/bin/bash
 
-set -o errexit
-set -o errtrace
-set -o pipefail
-
 DATA_ROOT="$1"
 
 OUTPUT_ROOT="$PWD"
@@ -17,21 +13,9 @@ fi
 
 
 function die {
-    echo "Caught signal, exiting."
-
-    # script syntax error
-    echo "Error on line:$LINENO"
-
-    if [ ! -z $DCM ]; then
-        echo "This dicom:$DCM"
-    fi
-
-    if [ ! -z $TAG ]; then
-        echo "Tag:$TAG"
-    fi
-
-    cleanup
-    exit -1
+    TAG="$1"
+    echo "Tag:$TAG, This dicom:$DCM"
+    exit 1
 }
 
 function cleanup {
@@ -40,12 +24,15 @@ function cleanup {
     fi
 }
 
+trap cleanup EXIT
+
 function get_int_tag {
     TAG="$1"
     VALUE="$(grep -m 1 "$TAG" $TEMP | awk '{print $3}')"
     if [ -z "$VALUE" ]; then
-        die
+        die "$TAG"
     fi
+
     echo "$VALUE"
 }
 
@@ -53,7 +40,7 @@ function get_char_tag {
     TAG="$1"
     VALUE="$(grep -m 1 "$TAG" $TEMP | grep -oP '\[.*\]' | tr -d '\[\]')"
     if [ -z "$VALUE" ]; then
-        die
+        die "$TAG"
     fi
     echo "$VALUE"
 }
@@ -104,6 +91,7 @@ function make_row {
     PATNAME=$(get_char_tag '(0010,0010)')
     PHYNAME=$(get_char_tag '(0010,0020)')
     PATID=$(get_char_tag '(0008,0090)')
+    AGE=$(get_char_tag '(0010,1010)')
     SD=$(get_char_tag '(0008,103e)')
     MOD=$(get_char_tag '(0008,0060)')
     INST=$(get_char_tag '(0008,0080)')
@@ -115,7 +103,7 @@ function make_row {
     STYDES=$(get_char_tag '(0008,1030)')
     STUID=$(get_char_tag '(0020,000d)')
     SERUID=$(get_char_tag '(0020,000e)')
-    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$DCM\"" | tee -a $INVENTORY
+    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$AGE\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$DCM\"" | tee -a $INVENTORY
     cleanup $TEMP
 }
 
@@ -130,10 +118,8 @@ if [ ! -f $DICOM_LIST ]; then
     find $DATA_ROOT -type f > $DICOM_LIST
 fi
 
-trap die ERR SIGINT
-trap cleanup EXIT
 
-echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"SRUID\",\"SERUID\",\"DCM\"" | tee  $INVENTORY
+echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"AGE\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"SRUID\",\"SERUID\",\"DCM\"" | tee  $INVENTORY
 
 while read DCM; do
     if [ $(isDicom "$DCM") = 'FALSE' ];then
