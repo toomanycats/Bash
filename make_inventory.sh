@@ -96,6 +96,7 @@ function make_row {
     MOD=$(get_char_tag '(0008,0060)')
     INST=$(get_char_tag '(0008,0080)')
     MAN=$(get_char_tag '(0008,0070)')
+    FIRM=$(get_char_tag '(0018,1020)')
     ROWS=$(get_int_tag '(0028,0010)')
     COLS=$(get_int_tag '(0028,0011)')
     DATETIME=$(make_date_time_string)
@@ -105,7 +106,8 @@ function make_row {
     SERUID=$(get_char_tag '(0020,000e)')
     ACQN=$(get_char_tag '(0020,0012)')
     TYPE=$(get_char_tag '(0008,0008)')
-    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$AGE\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$ACQN\",\"$TYPE\",\"$DCM\"" | tee -a $INVENTORY
+    SERNUM=$(get_char_tag '(0020,0011)')
+    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$AGE\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$FIRM\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$ACQN\",\"$TYPE\",\"$SERNUM\",\"$DCM\"" | tee -a $INVENTORY
     cleanup $TEMP
 }
 
@@ -121,7 +123,7 @@ if [ ! -f $DICOM_LIST ]; then
 fi
 
 
-echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"AGE\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"STUID\",\"SERUID\",\"ACQN\",\"TYPE\",\"DCM\"" | tee  $INVENTORY
+echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"AGE\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"FIRM\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"STUID\",\"SERUID\",\"ACQN\",\"TYPE\",\"SERNUM\",\"DCM\"" | tee  $INVENTORY
 
 while read DCM; do
     if [ $(isDicom "$DCM") = 'FALSE' ];then
