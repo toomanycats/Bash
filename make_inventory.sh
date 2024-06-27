@@ -103,7 +103,9 @@ function make_row {
     STYDES=$(get_char_tag '(0008,1030)')
     STUID=$(get_char_tag '(0020,000d)')
     SERUID=$(get_char_tag '(0020,000e)')
-    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$AGE\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$DCM\"" | tee -a $INVENTORY
+    ACQN=$(get_char_tag '(0020,0012)')
+    TYPE=$(get_char_tag '(0008,0008)')
+    echo "\"$STUDY\",\"$PATNAME\",\"$PHYNAME\",\"$PATID\",\"$AGE\",\"$SD\",\"$MOD\",\"$INST\",\"$MAN\",\"$ROWS\",\"$COLS\",\"$DATETIME\",\"$TR\",\"$STYDES\",\"$STUID\",\"$SERUID\",\"$ACQN\",\"$TYPE\",\"$DCM\"" | tee -a $INVENTORY
     cleanup $TEMP
 }
 
@@ -119,7 +121,7 @@ if [ ! -f $DICOM_LIST ]; then
 fi
 
 
-echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"AGE\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"SRUID\",\"SERUID\",\"DCM\"" | tee  $INVENTORY
+echo "\"STUDY\",\"PATNAME\",\"PHYNAME\",\"PATID\",\"AGE\",\"SD\",\"MOD\",\"INST\",\"MAN\",\"ROWS\",\"COLS\",\"DATETIME\",\"TR\",\"STDDES\",\"STUID\",\"SERUID\",\"ACQN\",\"TYPE\",\"DCM\"" | tee  $INVENTORY
 
 while read DCM; do
     if [ $(isDicom "$DCM") = 'FALSE' ];then
